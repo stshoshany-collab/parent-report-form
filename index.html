@@ -86,3 +86,26 @@ const Index = () => {
 };
 
 export default Index;
+
+
+
+    <script>
+const scriptURL = 'YOUR_URL';
+
+document.querySelector("form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const formData = {
+    childName: document.getElementById("childName").value,
+    parentName: document.getElementById("parentName").value,
+    reportText: document.getElementById("reportText").value
+  };
+
+  await fetch(scriptURL, {
+    method: "POST",
+    body: JSON.stringify(formData)
+  });
+
+  alert("הדיווח נשלח בהצלחה");
+});
+</script>
