@@ -1,111 +1,62 @@
-import { useState } from "react";
-import ViolenceReportForm from "@/components/ViolenceReportForm";
-import BehaviorReportForm from "@/components/BehaviorReportForm";
-import { FileText, ShieldAlert, BookOpen } from "lucide-react";
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>דיווח הורים</title>
+  <style>
+    body{font-family:Arial,system-ui;max-width:720px;margin:24px auto;padding:0 16px}
+    label{display:block;margin-top:14px;font-weight:700}
+    input,textarea{width:100%;padding:10px;margin-top:6px;box-sizing:border-box}
+    button{margin-top:16px;padding:12px 16px;cursor:pointer}
+    .note{margin-top:10px;color:#444}
+  </style>
+</head>
+<body>
+  <h1>דיווח הורים</h1>
 
-type FormType = "select" | "violence" | "behavior";
+  <form id="parentForm">
+    <label for="childName">שם הילד/ה</label>
+    <input id="childName" name="childName" required />
 
-const Index = () => {
-  const [activeForm, setActiveForm] = useState<FormType>("select");
+    <label for="parentName">שם ההורה</label>
+    <input id="parentName" name="parentName" required />
 
-  if (activeForm === "violence") {
-    return (
-      <div className="min-h-screen bg-background py-8 px-4">
-        <button
-          onClick={() => setActiveForm("select")}
-          className="no-print mb-6 max-w-3xl mx-auto block text-sm text-primary hover:underline font-heading"
-        >
-          ← חזרה לבחירת טופס
-        </button>
-        <ViolenceReportForm />
-      </div>
-    );
-  }
+    <label for="reportText">דיווח</label>
+    <textarea id="reportText" name="reportText" rows="6" required></textarea>
 
-  if (activeForm === "behavior") {
-    return (
-      <div className="min-h-screen bg-background py-8 px-4">
-        <button
-          onClick={() => setActiveForm("select")}
-          className="no-print mb-6 max-w-3xl mx-auto block text-sm text-primary hover:underline font-heading"
-        >
-          ← חזרה לבחירת טופס
-        </button>
-        <BehaviorReportForm />
-      </div>
-    );
-  }
+    <button type="submit">שליחה</button>
+    <div class="note" id="status"></div>
+  </form>
 
-  return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
-      <div className="max-w-2xl w-full text-center space-y-8">
-        <div className="space-y-3">
-          <div className="flex justify-center">
-            <div className="bg-primary text-primary-foreground w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg">
-              <FileText className="w-8 h-8" />
-            </div>
-          </div>
-          <h1 className="font-heading text-3xl text-foreground">טפסי דיווח - בית ספר הרכס</h1>
-          <p className="text-muted-foreground text-sm">בחרו את הטופס המתאים למילוי</p>
-        </div>
+  <script>
+    const scriptURL = "PASTE_YOUR_WEB_APP_URL_HERE";
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <button
-            onClick={() => setActiveForm("violence")}
-            className="group bg-card border border-border rounded-xl p-6 text-right hover:border-primary hover:shadow-lg transition-all duration-200 space-y-3"
-          >
-            <div className="bg-form-stop/10 text-form-stop w-12 h-12 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-              <ShieldAlert className="w-6 h-6" />
-            </div>
-            <h2 className="font-heading text-lg text-foreground">דיווח אירוע אלים</h2>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              טופס דיווח מפורט לתיעוד אירועי אלימות, כולל תיאור האירוע, ניתוח והפקת לקחים
-            </p>
-          </button>
+    document.getElementById("parentForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const status = document.getElementById("status");
+      status.textContent = "שולח...";
 
-          <button
-            onClick={() => setActiveForm("behavior")}
-            className="group bg-card border border-border rounded-xl p-6 text-right hover:border-primary hover:shadow-lg transition-all duration-200 space-y-3"
-          >
-            <div className="bg-primary/10 text-primary w-12 h-12 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-              <BookOpen className="w-6 h-6" />
-            </div>
-            <h2 className="font-heading text-lg text-foreground">דיווח התנהגות אסורה בשיעורים</h2>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              טופס דיווח על התנהגות שאינה על פי הכללים בזמן השיעורים
-            </p>
-          </button>
-        </div>
+      const formData = {
+        childName: document.getElementById("childName").value.trim(),
+        parentName: document.getElementById("parentName").value.trim(),
+        reportText: document.getElementById("reportText").value.trim()
+      };
 
-        <p className="text-xs text-muted-foreground">
-          הטפסים מותאמים למילוי דיגיטלי ולהדפסה • ניתן לשמור כקובץ
-        </p>
-      </div>
-    </div>
-  );
-};
+      try {
+        const res = await fetch(scriptURL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(formData)
+        });
 
-export default Index;
-
-
-
-    <script>
-const scriptURL = 'YOUR_URL';
-
-document.querySelector("form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const formData = {
-    childName: document.getElementById("childName").value,
-    parentName: document.getElementById("parentName").value,
-    reportText: document.getElementById("reportText").value
-  };
-
-  await fetch(scriptURL, {
-    method: "POST",
-    body: JSON.stringify(formData)
-  });
-
-  alert("הדיווח נשלח בהצלחה");
-});
-</script>
+        status.textContent = "נשלח בהצלחה ✅";
+        e.target.reset();
+      } catch (err) {
+        status.textContent = "שגיאה בשליחה ❌ נסי שוב.";
+      }
+    });
+  </script>
+</body>
+</html>
